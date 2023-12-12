@@ -21,6 +21,11 @@ pipeline {
 
     stage('Deploy in Production') {
       steps {
+
+        timeout(time: 2, unit: 'MINUTES') {
+          input(message: 'Do you want to approve the deployment , please approve ?', ok: 'Yes')
+        }
+        
         echo 'pwd'
         echo 'Initiating deployment'
         
