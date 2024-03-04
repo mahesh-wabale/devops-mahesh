@@ -4,8 +4,8 @@ pipeline {
     stage('Checkout') {
       steps {
         echo 'pwd'
-      }
-    }
+     // }
+   // }
 
     stage('Build') {
       steps {
