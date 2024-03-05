@@ -1,36 +1,49 @@
 pipeline {
-  agent any
-  stages {
-    stage('Checkout') {
-      steps {
-        echo 'pwd'
-      }
-    }
+    agent any
 
-    stage('Build') {
-      steps {
-        echo 'pwd'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        echo 'pwd'
-      }
-    }
-
-    stage('Deploy in Production') {
-      steps {
-
-        timeout(time: 2, unit: 'MINUTES') {
-          input(message: 'Do you want to approve the deployment , please approve ?', ok: 'Yes')
+    stages {
+        stage('Build') {
+            steps {
+                // Your build steps here
+            }
         }
-        
-        echo 'pwd'
-        echo 'Initiating deployment'
-        
-      }
+
+        stage('Manual Approval') {
+            steps {
+                script {
+                    def approvalInput = input(
+                        id: 'manualApproval',
+                        message: 'Do you want to proceed?',
+                        submitter: 'user1,user2',
+                        parameters: [
+                            choice(
+                                name: 'APPROVAL',
+                                choices: 'Yes\nNo',
+                                description: 'Approve or reject the deployment'
+                            )
+                        ]
+                    )
+
+                    if (approvalInput == 'Yes') {
+                        echo 'Proceeding with the deployment...'
+                        // Add deployment steps here
+                    } else {
+                        error('Deployment rejected by the approver.')
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Your deployment steps here
+            }
+        }
     }
 
-  }
+    post {
+        failure {
+            echo 'Deployment failed'
+        }
+    }
 }
